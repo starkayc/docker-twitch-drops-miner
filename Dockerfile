@@ -28,7 +28,7 @@ RUN ln -s /TwitchDropsMiner/config/cookies.jar /TwitchDropsMiner/cookies.jar
 RUN chmod -R 777 /TwitchDropsMiner
 
 # Copy the start script.
-RUN echo -e '#!/bin/bash \nexec /TwitchDropsMiner/TwitchDropsMiner' >> startapp.sh
+RUN echo -e '#!/bin/bash \nexec /TwitchDropsMiner/TwitchDropsMiner' >> /startapp.sh
 RUN chmod +x /startapp.sh
 
 # Generate and install favicons
