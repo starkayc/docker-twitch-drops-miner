@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: 'master'
+        ref: 'main'
     - name: Build the Docker image
       env:
         HUB_NAME: ${{ secrets.DOCKER_NAME }}
