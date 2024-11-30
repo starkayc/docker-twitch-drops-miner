@@ -12,4 +12,4 @@ Don't forget to mount `/config` to have data persistence.
 
 You can also mount `/cache` to preserve cached images and mappings.
 
-Available at: https://hub.docker.com/r/starkayc/twitchdropsminer
+Available at: https://hub.docker.com/r/starkayc/twitch-drops-miner
