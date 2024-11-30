@@ -1,6 +1,7 @@
 # docker-twitch-drops-miner
 
 Based on this image: https://github.com/jlesage/docker-baseimage-gui
+
 Based on DevilXD version of TwitchDropsMiner: https://github.com/DevilXD/TwitchDropsMiner
 
 ```
