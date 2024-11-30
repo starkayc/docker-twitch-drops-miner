@@ -3,7 +3,7 @@ name: Build TwitchDropsMiner Docker Image
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - ".github/workflows/main.yml"
       - "Dockerfile"
