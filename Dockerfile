@@ -1,39 +1,51 @@
-# Pull base image.
+# Use a builder for downloading file
+FROM ubuntu:22.04 AS builder
+
+RUN apt-get update -y && \
+    apt-get install -y wget unzip && \
+    wget -P /tmp/ https://github.com/DevilXD/TwitchDropsMiner/releases/download/dev-build/Twitch.Drops.Miner.Linux.PyInstaller.zip && \
+    unzip -p /tmp/Twitch.Drops.Miner.Linux.PyInstaller.zip "Twitch Drops Miner/Twitch Drops Miner (by DevilXD)" > /TwitchDropsMiner && \
+    chmod +x /TwitchDropsMiner
+
+# Switch to image were going to use for gui
 FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.7
 
-MAINTAINER fireph
+# Labels for the image
+LABEL maintainer="StarKayC" \
+    org.opencontainers.image.authors="DevilXD" \
+    org.opencontainers.image.url="https://github.com/starkayc/docker-twitch-drops-miner" \
+    org.opencontainers.image.documentation="https://github.com/DevilXD/TwitchDropsMiner?tab=readme-ov-file#usage" \
+    org.opencontainers.image.source="https://github.com/DevilXD/TwitchDropsMiner" \
+    org.opencontainers.image.vendor="StarKayC (Docker Image)" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.title="TwitchDropsMiner Docker Image" \
+    org.opencontainers.image.description="Dockerized version of DevilXD's TwitchDropsMiner. Allows AFK mining of Twitch drops with automatic claiming and channel switching."
 
-# Environment
-ENV LANG=en_US.UTF-8
-ENV DARK_MODE=1
-ENV KEEP_APP_RUNNING=1
-ENV TDM_VERSION_TAG 15-dev
-ENV APP_ICON_URL https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/refs/heads/master/appimage/pickaxe.png
+# Set environments
+ENV LANG=en_US.UTF-8 \
+    TZ=Etc/UTC \
+    DARK_MODE=1 \
+    KEEP_APP_RUNNING=1 \
+    TDM_VERSION_TAG=v15.dev.8d2ede8 \
+    APP_ICON_URL=https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/refs/heads/master/appimage/pickaxe.png
 
-# Install Twitch Drops Miner
-RUN apt-get update -y
-RUN apt-get install -y wget unzip libc6 gir1.2-appindicator3-0.1 language-pack-en fonts-noto-color-emoji
-RUN wget -P /tmp/ https://github.com/DevilXD/TwitchDropsMiner/releases/download/dev-build/Twitch.Drops.Miner.Linux.PyInstaller.zip
-RUN mkdir /TwitchDropsMiner
-RUN unzip -p /tmp/Twitch.Drops.Miner.Linux.PyInstaller.zip "Twitch Drops Miner/Twitch Drops Miner (by DevilXD)" >/TwitchDropsMiner/TwitchDropsMiner
-RUN chmod +x /TwitchDropsMiner/TwitchDropsMiner
-RUN rm -rf /tmp
+# Update the system while installing packages and cleaning up files
+RUN apt-get update -y && \
+    apt-get install -y wget gir1.2-appindicator3-0.1 fonts-noto-color-emoji fonts-wqy-zenhei language-pack-en && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/* /tmp/* /var/log/*
 
-# Link config folder files
-RUN mkdir /TwitchDropsMiner/config
-RUN ln -s /TwitchDropsMiner/config/settings.json /TwitchDropsMiner/settings.json
-RUN ln -s /TwitchDropsMiner/config/cookies.jar /TwitchDropsMiner/cookies.jar
+# Create the folders for the app and link the settings and cookies to a config folder for easy access. Set the file as executable and set folder permissions to 777 
+RUN mkdir -p /TwitchDropsMiner/config && \
+    ln -s /TwitchDropsMiner/config/settings.json /TwitchDropsMiner/settings.json && \
+    ln -s /TwitchDropsMiner/config/cookies.jar /TwitchDropsMiner/cookies.jar && \
+    printf '#!/bin/sh\ncd /TwitchDropsMiner\n./TwitchDropsMiner\n' > /startapp.sh && \
+    chmod +x /startapp.sh && \
+    chmod -R 777 /TwitchDropsMiner
 
-# Make sure permissions are gonna work
-RUN chmod -R 777 /TwitchDropsMiner
+# Copy app from builder
+COPY --from=builder /TwitchDropsMiner /TwitchDropsMiner/TwitchDropsMiner
 
-# Copy the start script.
-RUN echo -e '#!/bin/bash \nexec /TwitchDropsMiner/TwitchDropsMiner' >> /startapp.sh
-RUN chmod +x /startapp.sh
-
-# Generate and install favicons
-RUN install_app_icon.sh "$APP_ICON_URL"
-
-# Set the name/version of the application.
-RUN set-cont-env APP_NAME "Twitch Drops Miner"
-RUN set-cont-env APP_VERSION "$TDM_VERSION_TAG"
+# Install app icon & set app name and version
+RUN install_app_icon.sh "$APP_ICON_URL" && \
+    set-cont-env APP_NAME "Twitch Drops Miner" && \
+    set-cont-env APP_VERSION "$TDM_VERSION_TAG"

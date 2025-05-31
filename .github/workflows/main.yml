@@ -1,4 +1,4 @@
-name: Build TwitchDropsMiner Docker Image
+name: Build and Push TwitchDropsMiner Docker Images
 
 on:
   push:
@@ -7,23 +7,39 @@ on:
     paths:
       - ".github/workflows/main.yml"
       - "Dockerfile"
-
   workflow_dispatch:
 
 jobs:
-  TwitchDropsMiner:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: 'main'
-    - name: Build the Docker image
-      env:
-        HUB_NAME: ${{ secrets.DOCKER_NAME }}
-        HUB_KEY: ${{ secrets.DOCKER_TOKEN }}
-      run: |
-        docker login -u $HUB_NAME -p $HUB_KEY
-        docker build . --pull --no-cache --tag starkayc/twitch-drops-miner:latest
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-        docker push starkayc/twitch-drops-miner:latest
+    # Login to Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_NAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    # Login to GitHub Container Registry
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: starkayc
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    - name: Build and push images
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+          starkayc/twitch-drops-miner:latest
+          ghcr.io/starkayc/twitch-drops-miner:latest
+        no-cache: true
+        pull: true
