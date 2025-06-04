@@ -8,7 +8,7 @@ RUN apt-get update -y && \
     chmod +x /TwitchDropsMiner
 
 # Switch to image were going to use for gui
-FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.7
+FROM jlesage/baseimage-gui:ubuntu-22.04-v4.7.1
 
 # Labels for the image
 LABEL maintainer="StarKayC" \
@@ -26,7 +26,7 @@ ENV LANG=en_US.UTF-8 \
     TZ=Etc/UTC \
     DARK_MODE=1 \
     KEEP_APP_RUNNING=1 \
-    TDM_VERSION_TAG=v16.dev.8d2ede8 \
+    TDM_VERSION_TAG=v16.dev.a26b359 \
     APP_ICON_URL=https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/refs/heads/master/appimage/pickaxe.png
 
 # Update the system while installing packages and cleaning up files
