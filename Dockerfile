@@ -3,8 +3,8 @@ FROM ubuntu:22.04 AS builder
 
 RUN apt-get update -y && \
     apt-get install -y wget unzip && \
-    wget -P /tmp/ https://github.com/DevilXD/TwitchDropsMiner/releases/download/dev-build/Twitch.Drops.Miner.Linux.PyInstaller.zip && \
-    unzip -p /tmp/Twitch.Drops.Miner.Linux.PyInstaller.zip "Twitch Drops Miner/Twitch Drops Miner (by DevilXD)" > /TwitchDropsMiner && \
+    wget -P /tmp/ https://github.com/DevilXD/TwitchDropsMiner/releases/download/dev-build/Twitch.Drops.Miner.Linux.PyInstaller-x86_64.zip && \
+    unzip -p /tmp/Twitch.Drops.Miner.Linux.PyInstaller-x86_64.zip "Twitch Drops Miner/Twitch Drops Miner (by DevilXD)" > /TwitchDropsMiner && \
     chmod +x /TwitchDropsMiner
 
 # Switch to image were going to use for gui
