@@ -26,7 +26,7 @@ ENV LANG=en_US.UTF-8 \
     TZ=Etc/UTC \
     DARK_MODE=1 \
     KEEP_APP_RUNNING=1 \
-    TDM_VERSION_TAG=v16.dev.5d7a697 \
+    TDM_VERSION_TAG=v16.dev.7381bea \
     APP_ICON_URL=https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/refs/heads/master/appimage/pickaxe.png
 
 # Update the system while installing packages and cleaning up files
