@@ -22,12 +22,12 @@ LABEL maintainer="StarKayC" \
     org.opencontainers.image.description="Dockerized version of DevilXD's TwitchDropsMiner. Allows AFK mining of Twitch drops with automatic claiming and channel switching."
 
 # Set environments
-ENV LANG=en_US.UTF-8 \
-    TZ=Etc/UTC \
-    DARK_MODE=1 \
-    KEEP_APP_RUNNING=1 \
-    TDM_VERSION_TAG=v16.dev.bbd5b72 \
-    APP_ICON_URL=https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/refs/heads/master/appimage/pickaxe.png
+ENV LANG=en_US.UTF-8
+ENV TZ=Etc/UTC
+ENV DARK_MODE=1
+ENV KEEP_APP_RUNNING=1
+ENV TDM_VERSION_TAG=v16.dev.bbd5b72
+ENV APP_ICON_URL=https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/refs/heads/master/appimage/pickaxe.png
 
 # Update the system while installing packages and cleaning up files
 RUN apt-get update -y && \
