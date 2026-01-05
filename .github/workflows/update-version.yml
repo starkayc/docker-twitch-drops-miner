@@ -77,9 +77,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.update-dockerfile.outputs.new_version }}
-          name: "v${{ steps.update-dockerfile.outputs.new_version }}"
+          name: "${{ steps.update-dockerfile.outputs.new_version }}"
           body: |
-            Updated Twitch Drops Miner to v${{ steps.update-dockerfile.outputs.new_version }}
+            Updated Twitch Drops Miner to ${{ steps.update-dockerfile.outputs.new_version }}
 
             Reference commit: https://github.com/DevilXD/TwitchDropsMiner/commit/${{ steps.get-release.outputs.full_commit_hash }}
 
