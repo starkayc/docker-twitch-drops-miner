@@ -1,77 +1,92 @@
-# TwitchDropsMiner Docker
+# TwitchDropsMiner Docker (schadis)
 
-A Dockerized version of [TwitchDropsMiner](https://github.com/DevilXD/TwitchDropsMiner), built on [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui).
+Docker image for [DevilXD/TwitchDropsMiner](https://github.com/DevilXD/TwitchDropsMiner) based on [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui).
 
-📦 Available on [Docker Hub](https://hub.docker.com/r/starkayc/twitch-drops-miner) and [GHCR](https://ghcr.io/starkayc/twitch-drops-miner).
+## Image tags
+
+This repo publishes two variants to GHCR:
+
+- `ghcr.io/schadis/docker-twitch-drops-miner:v15`  
+  Stable base using upstream **v15** PyInstaller release.
+- `ghcr.io/schadis/docker-twitch-drops-miner:beta`  
+  Built from latest upstream `master` source on every workflow run.
+- `ghcr.io/schadis/docker-twitch-drops-miner:latest`  
+  Alias of `v15`.
 
 ---
 
-## 📥 Installation (Recommended)
+## Docker Compose examples
 
-1. **Create `compose.yaml`**:
+### Stable v15
 
 ```yaml
 services:
   twitchdropminer:
-    image: starkayc/twitch-drops-miner
+    image: ghcr.io/schadis/docker-twitch-drops-miner:v15
     container_name: twitchdropminer
     restart: unless-stopped
     ports:
       - "5800:5800"
+      - "5900:5900"
     volumes:
-      - ./config:/TwitchDropsMiner/config
-      - ./cache:/TwitchDropsMiner/cache
+      - ./config:/config
 ```
 
-2. **Create folders**:
+### Beta (latest upstream master)
 
-```bash
-mkdir config cache
+```yaml
+services:
+  twitchdropminer-beta:
+    image: ghcr.io/schadis/docker-twitch-drops-miner:beta
+    container_name: twitchdropminer-beta
+    restart: unless-stopped
+    ports:
+      - "5801:5800"
+      - "5901:5900"
+    volumes:
+      - ./config-beta:/config
 ```
 
-3. **Run the container**:
-
-```bash
-docker compose up -d
-```
-
-4. Open your browser and go to:  
-`http://<server-ip>:5800`
+Open UI via:
+- `http://<server-ip>:5800` (v15)
+- `http://<server-ip>:5801` (beta)
 
 ---
 
-## 🛠️ Manual Build (Optional)
+## Unraid usage
 
-If you prefer building the image yourself:
+You can create **two templates/containers** in Unraid:
 
-1. **Clone the repo**:
+### 1) Stable container (v15)
 
-```bash
-git clone https://github.com/starkayc/docker-twitch-drops-miner
-cd docker-twitch-drops-miner
-```
+- Repository: `ghcr.io/schadis/docker-twitch-drops-miner:v15`
+- Name: `twitch-drops-miner`
+- Ports:
+  - `5800 -> 5800`
+  - `5900 -> 5900`
+- Path:
+  - `/mnt/user/appdata/twitch-drops-miner` -> `/config`
+- Restart: your preference (`unless-stopped` recommended)
 
-2. **Build the image**:
+### 2) Beta container (master)
 
-```bash
-docker build -t twitch-drops-miner .
-```
+- Repository: `ghcr.io/schadis/docker-twitch-drops-miner:beta`
+- Name: `twitch-drops-miner-beta`
+- Ports:
+  - `5801 -> 5800`
+  - `5901 -> 5900`
+- Path:
+  - `/mnt/user/appdata/twitch-drops-miner-beta` -> `/config`
+- Restart: your preference (`unless-stopped` recommended)
 
-3. **Create folders and run**:
-
-```bash
-mkdir config cache
-docker run -p 5800:5800 --restart=unless-stopped \
-  -v "$PWD/config:/TwitchDropsMiner/config" \
-  -v "$PWD/cache:/TwitchDropsMiner/cache" \
-  twitch-drops-miner
-```
-
-4. Access the UI at `http://<server-ip>:5800`
+This lets you run v15 and beta side-by-side without conflicts.
 
 ---
 
-## 📎 Resources
+## Build automation
 
-- Base GUI Image: [jlesage/docker-baseimage-gui](https://github.com/jlesage/docker-baseimage-gui)  
-- TwitchDropsMiner: [DevilXD/TwitchDropsMiner](https://github.com/DevilXD/TwitchDropsMiner)
+GitHub Actions builds and pushes:
+- `v15` and `latest` (stable)
+- `beta` (latest upstream master)
+
+Trigger: push to `main` or manual workflow dispatch.
