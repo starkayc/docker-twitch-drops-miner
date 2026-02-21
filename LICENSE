@@ -1,0 +1,55 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/main.yml"
+      - "Dockerfile"
+      - "README.md"
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push v15 image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            TDM_CHANNEL=v15
+          tags: |
+            ghcr.io/${{ github.repository }}:v15
+            ghcr.io/${{ github.repository }}:latest
+
+      - name: Build and push beta image (latest upstream master)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            TDM_CHANNEL=beta
+            TDM_REF=master
+          tags: |
+            ghcr.io/${{ github.repository }}:beta
